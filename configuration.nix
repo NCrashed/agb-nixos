@@ -35,6 +35,9 @@
     };
   };
 
+  services.udev.packages = [ pkgs.android-udev-rules ];
+  programs.adb.enable = true;
+  services.blueman.enable = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -118,7 +121,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.user = {
     isNormalUser = true;
-    extraGroups = [ "docker" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "docker" "wheel" "adbusers" ]; # Enable ‘sudo’ for the user.
   };
 
   # This value determines the NixOS release from which the default
