@@ -114,9 +114,9 @@
   services.xserver.videoDrivers = [ "intel" "nvidia" ];
   hardware.nvidia.optimus_prime.enable = true;
   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.optimus_prime.nvidiaBusId = "PCI:01:00.0";
+  hardware.nvidia.optimus_prime.nvidiaBusId = "PCI:0:1:0";
   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.optimus_prime.intelBusId = "PCI:00:02.0";
+  hardware.nvidia.optimus_prime.intelBusId = "PCI:0:2:0";
 
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
