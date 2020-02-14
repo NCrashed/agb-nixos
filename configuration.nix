@@ -17,6 +17,7 @@
   nix.useSandbox = "relaxed";
   nix.binaryCaches = [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
   nix.binaryCachePublicKeys = [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
+  nixpkgs.config.allowUnfree = true;
   
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
@@ -34,6 +35,8 @@
       allowDiscards = true;
     };
   };
+
+  boot.supportedFilesystems = [ "ntfs" ];
 
   services.udev.packages = [ pkgs.android-udev-rules ];
   programs.adb.enable = true;
@@ -73,6 +76,7 @@
      gnome3.gnome-tweaks
      tdesktop
      cabal2nix
+     (import (builtins.fetchTarball "https://github.com/hercules-ci/ghcide-nix/tarball/master") {}).ghcide-ghc865
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -106,6 +110,13 @@
   # services.xserver.enable = true;
   # services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
+
+  services.xserver.videoDrivers = [ "intel" "nvidia" ];
+  hardware.nvidia.optimus_prime.enable = true;
+  # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+  hardware.nvidia.optimus_prime.nvidiaBusId = "PCI:01:00.0";
+  # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+  hardware.nvidia.optimus_prime.intelBusId = "PCI:00:02.0";
 
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
