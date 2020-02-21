@@ -10,6 +10,8 @@
       ./hardware-configuration.nix
       ./private-ssh-pipe.nix
       ./cachix.nix
+      ./bitcoin.nix
+      ./local-secrets.nix
     ];
 
   services.private-ssh-pipe.enable = true;
@@ -18,7 +20,20 @@
   nix.binaryCaches = [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
   nix.binaryCachePublicKeys = [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
   nixpkgs.config.allowUnfree = true;
-  
+  nixpkgs.config.packageOverrides = pkgs:  {
+    altcoins.bitcoind = pkgs.callPackage ./bitcoin-node.nix { withGui = false; };   
+  };
+
+  services.bitcoin = {
+    enable = true;
+    nodeUser = "user";
+    nodePort = 8333;
+    testnet = true;
+  };
+  deployment.keys.rpcpassword = {
+    text = "supersecretpassword";
+  };
+
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
@@ -41,6 +56,7 @@
   services.udev.packages = [ pkgs.android-udev-rules ];
   programs.adb.enable = true;
   services.blueman.enable = true;
+  virtualisation.docker.enable = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -115,9 +131,9 @@
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome3.enable = true;
-
-  # Enable touchpad support.
-  # services.xserver.libinput.enable = true;
+  # Touchpad 
+  services.xserver.synaptics.enable = true;
+  services.xserver.libinput.enable = false;
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
