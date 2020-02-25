@@ -12,6 +12,7 @@
       ./cachix.nix
       ./bitcoin.nix
       ./local-secrets.nix
+      ./ergo.nix
     ];
 
   services.private-ssh-pipe.enable = true;
@@ -22,6 +23,7 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.packageOverrides = pkgs:  {
     altcoins.bitcoind = pkgs.callPackage ./bitcoin-node.nix { withGui = false; };   
+    ergo-platform = pkgs.callPackage ./ergo-node.nix {};
   };
 
   services.bitcoin = {
@@ -29,6 +31,11 @@
     nodeUser = "user";
     nodePort = 8333;
     testnet = true;
+  };
+  services.ergo = {
+    enable = true;
+    testnet = true;
+    secretHash = "324dcf027dd4a30a932c441f365a25e86b173defa4b8e58948253471b81b72cf";
   };
   deployment.keys.rpcpassword = {
     text = "supersecretpassword";
