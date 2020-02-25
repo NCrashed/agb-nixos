@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     cp -v $src $out/lib/ergo-platform/ergo.jar
     cat > $out/bin/ergo-node << EOF
     #!/bin/sh
-    exec ${jdk11}/bin/java -jar $out/lib/ergo-platform/ergo.jar \$@ 
+    exec ${jdk11}/bin/java -Xmx3G -Dlogback.stdout.level=DEBUG -jar $out/lib/ergo-platform/ergo.jar \$@ 
     EOF
     chmod +x $out/bin/ergo-node
   '';

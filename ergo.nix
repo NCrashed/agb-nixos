@@ -25,7 +25,7 @@ in {
       };
       nodePort = mkOption {
         type = types.int;
-        default = 9052;
+        default = 9020;
         description = ''
           Which port the cryptonode serves RPC.
         '';
@@ -51,6 +51,13 @@ in {
           Path to blockchain database on filesystem.
         '';
       };
+      user = mkOption {
+        type = types.str;
+        default = "ergo";
+        description = ''
+          User to run ergo node with.
+        '';
+      };
       config = mkOption {
         type = types.str;
         default = ''
@@ -59,15 +66,15 @@ in {
             node {
               mining = false
             }
-            wallet.secretStorage.secretDir = ${ergo-cfg.datadir}"/wallet/keystore"
+            wallet.secretStorage.secretDir = ${ergo-cfg.datadir}/wallet/keystore
           }
           scorex {
             network {
               declaredAddress = "${ergo-cfg.nodeAddress}:${toString ergo-cfg.nodePort}"
-
             }
             restApi {
               apiKeyHash = "${ergo-cfg.secretHash}"
+              bindAddress = "0.0.0.0:9052"
             }
           }
         '';
@@ -90,6 +97,13 @@ in {
           Example for secret 'hello' is '324dcf027dd4a30a932c441f365a25e86b173defa4b8e58948253471b81b72cf'.
         '';
       };
+      uid = mkOption {
+        type = types.int;
+        default = 317;
+        description = ''
+          User and group id for service user.
+        '';
+      };
     };
   };
 
@@ -99,6 +113,14 @@ in {
     environment.etc."ergo.conf" = {
       text = ergo-cfg.config; # we can use values of options for this service here
     };
+    # User configuration
+    users.users."${ergo-cfg.user}" = {
+      group = ergo-cfg.user;
+      home = ergo-cfg.datadir;
+      createHome = true;
+      uid = ergo-cfg.uid;
+    };
+    users.groups."${ergo-cfg.user}".gid = ergo-cfg.uid;
     # Create systemd service
     systemd.services.ergo = {
       enable = true;
@@ -109,20 +131,10 @@ in {
       serviceConfig = {
           Restart = "always";
           RestartSec = 30;
-          User = "root";
+          User = ergo-cfg.user;
+          Group = ergo-cfg.user;
         };
       wantedBy = ["multi-user.target"];
-    };
-    # Init folder for ergo data
-    system.activationScripts = {
-      intergo = {
-        text = ''
-          if [ ! -d "${ergo-cfg.datadir}" ]; then
-            mkdir -p ${ergo-cfg.datadir}
-          fi
-        '';
-        deps = [];
-      };
     };
   };
 }

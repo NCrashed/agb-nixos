@@ -35,7 +35,7 @@
   services.ergo = {
     enable = true;
     testnet = true;
-    secretHash = "324dcf027dd4a30a932c441f365a25e86b173defa4b8e58948253471b81b72cf";
+    secretHash = "d70024ac9c61e7d314d9f040a6f38e8d82f862940f8081959d499bb7938a1952";
   };
   deployment.keys.rpcpassword = {
     text = "supersecretpassword";
